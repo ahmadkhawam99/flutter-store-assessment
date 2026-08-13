@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:store_app/app/app.dart';
+import 'package:store_app/core/validation/auth/auth_validators.dart';
 
 void main() {
   testWidgets('splash continues to sign in', (tester) async {
@@ -31,8 +32,20 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Welcome back'), findsOneWidget);
 
+    final fields = find.byType(TextFormField);
+    await tester.enterText(fields.at(0), 'testuser');
+    await tester.enterText(fields.at(1), 'password');
     await tester.tap(find.widgetWithText(FilledButton, 'Sign In'));
     await tester.pumpAndSettle();
     expect(find.text('Home content is coming next.'), findsOneWidget);
+  });
+
+  test('sign up validators accept valid values and reject invalid ones', () {
+    expect(AuthValidators.username('ab'), isNotNull);
+    expect(AuthValidators.username('testuser'), isNull);
+    expect(AuthValidators.email('invalid-email'), isNotNull);
+    expect(AuthValidators.email('user@example.com'), isNull);
+    expect(AuthValidators.password('12345'), isNotNull);
+    expect(AuthValidators.password('password'), isNull);
   });
 }

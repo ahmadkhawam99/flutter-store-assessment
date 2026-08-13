@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/navigator/routes.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/validation/auth/auth_validators.dart';
 import '../../../../core/widgets/image/app_image.dart';
 import '../widgets/auth_password_form_field.dart';
 import '../widgets/auth_text_form_field.dart';
@@ -16,6 +17,7 @@ class SignInView extends StatefulWidget {
 }
 
 class _SignInViewState extends State<SignInView> {
+  final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -64,55 +66,64 @@ class _SignInViewState extends State<SignInView> {
                   AppImage.logo(width: 150.r),
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 26.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(height: 18.h),
-                    Text(
-                      'Welcome back',
-                      style: context.textTheme.headlineMedium,
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'Sign in to continue to your store.',
-                      style: context.textTheme.bodyLarge,
-                    ),
-                    SizedBox(height: 32.h),
-                    AuthTextFormField(
-                      controller: _usernameController,
-                      label: 'Username',
-                      prefixIcon: Icons.person_outline,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.username],
-                    ),
-                    SizedBox(height: 16.h),
-                    AuthPasswordFormField(
-                      controller: _passwordController,
-                      textInputAction: TextInputAction.done,
-                      autofillHints: const [AutofillHints.password],
-                    ),
-                    SizedBox(height: 24.h),
-                    FilledButton(
-                      // TODO(auth): Replace UI-only navigation with Auth state.
-                      onPressed: () => context.goNamed(AppRoutes.homeName),
-                      child: const Text('Sign In'),
-                    ),
-                    SizedBox(height: 20.h),
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        const Text("Don't have an account?"),
-                        TextButton(
-                          onPressed: () =>
-                              context.pushNamed(AppRoutes.signUpName),
-                          child: const Text('Sign Up'),
-                        ),
-                      ],
-                    ),
-                  ],
+              Form(
+                key: _formKey,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 26.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(height: 18.h),
+                      Text(
+                        'Welcome back',
+                        style: context.textTheme.headlineMedium,
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'Sign in to continue to your store.',
+                        style: context.textTheme.bodyLarge,
+                      ),
+                      SizedBox(height: 32.h),
+                      AuthTextFormField(
+                        controller: _usernameController,
+                        label: 'Username',
+                        prefixIcon: Icons.person_outline,
+                        textInputAction: TextInputAction.next,
+                        autofillHints: const [AutofillHints.username],
+                        validator: AuthValidators.username,
+                      ),
+                      SizedBox(height: 16.h),
+                      AuthPasswordFormField(
+                        controller: _passwordController,
+                        textInputAction: TextInputAction.done,
+                        autofillHints: const [AutofillHints.password],
+                        validator: AuthValidators.password,
+                      ),
+                      SizedBox(height: 24.h),
+                      FilledButton(
+                        // TODO(auth): Replace UI-only navigation with Auth state.
+                        onPressed: () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            context.goNamed(AppRoutes.homeName);
+                          }
+                        },
+                        child: const Text('Sign In'),
+                      ),
+                      SizedBox(height: 20.h),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Text("Don't have an account?"),
+                          TextButton(
+                            onPressed: () =>
+                                context.pushNamed(AppRoutes.signUpName),
+                            child: const Text('Sign Up'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
