@@ -49,41 +49,41 @@ class _SignInViewState extends State<SignInView> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        body: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: 24.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 230.h,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            AppColors.primary,
-                            AppColors.cyan,
-                            AppColors.primary.withAlpha(100),
-                          ],
-                          stops: const [0.0, 0.55, 1.0],
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(50.r),
-                          bottomRight: Radius.circular(50.r),
-                        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.only(bottom: 24.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 230.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColors.primary,
+                          AppColors.cyan,
+                          AppColors.primary.withAlpha(100),
+                        ],
+                        stops: const [0.0, 0.55, 1.0],
+                      ),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(50.r),
+                        bottomRight: Radius.circular(50.r),
                       ),
                     ),
-                    AppImage.logo(width: 150.r),
-                  ],
-                ),
-                Form(
+                  ),
+                  AppImage.logo(width: 150.r),
+                ],
+              ),
+              TapRegion(
+                onTapOutside: (_) =>
+                    FocusManager.instance.primaryFocus?.unfocus(),
+                child: Form(
                   key: _formKey,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 26.w),
@@ -165,8 +165,8 @@ class _SignInViewState extends State<SignInView> {
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

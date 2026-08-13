@@ -24,6 +24,18 @@ void main() {
 
     expect(find.text('Welcome back'), findsOneWidget);
 
+    await tester.tap(find.byType(TextFormField).first);
+    await tester.pump();
+    var editableText = tester.widget<EditableText>(
+      find.byType(EditableText).first,
+    );
+    expect(editableText.focusNode.hasFocus, true);
+
+    await tester.tapAt(const Offset(4, 4));
+    await tester.pump();
+    editableText = tester.widget<EditableText>(find.byType(EditableText).first);
+    expect(editableText.focusNode.hasFocus, false);
+
     await tester.ensureVisible(find.text('Sign Up'));
     await tester.tap(find.text('Sign Up'));
     await tester.pumpAndSettle();

@@ -50,45 +50,45 @@ class _SignUpViewState extends State<SignUpView> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        body: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Stack(
-            children: [
-              Positioned(
-                top: -70.h,
-                right: -55.w,
-                child: Container(
-                  width: 190.r,
-                  height: 190.r,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [AppColors.primary, AppColors.cyan],
-                    ),
+        body: Stack(
+          children: [
+            Positioned(
+              top: -70.h,
+              right: -55.w,
+              child: Container(
+                width: 190.r,
+                height: 190.r,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.primary, AppColors.cyan],
                   ),
                 ),
               ),
-              Positioned(
-                top: 58.h,
-                right: 30.w,
-                child: Container(
-                  width: 34.r,
-                  height: 34.r,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.primary.withAlpha(28),
-                  ),
+            ),
+            Positioned(
+              top: 58.h,
+              right: 30.w,
+              child: Container(
+                width: 34.r,
+                height: 34.r,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.primary.withAlpha(28),
                 ),
               ),
-              SafeArea(
-                child: Center(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(24.w, 72.h, 24.w, 28.h),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 440),
+            ),
+            SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(24.w, 72.h, 24.w, 28.h),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 440),
+                    child: TapRegion(
+                      onTapOutside: (_) =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
                       child: Form(
                         key: _formKey,
                         child: Column(
@@ -187,8 +187,8 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
