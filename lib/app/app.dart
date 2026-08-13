@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../core/navigator/app_router.dart';
 import '../core/theme/app_theme.dart';
@@ -8,13 +9,17 @@ class StoreApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Store App',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
-      routerConfig: AppRouter.router,
+    return ScreenUtilInit(
+      designSize: const Size(390, 844),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) => MaterialApp.router(
+        title: 'Store App',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        themeMode: ThemeMode.light,
+        routerConfig: AppRouter.router,
+      ),
     );
   }
 }
