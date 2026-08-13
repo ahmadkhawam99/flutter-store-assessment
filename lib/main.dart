@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'app/app.dart';
+import 'core/di/dependency_injection.dart';
 
 void main() {
-  runApp(const MyApp());
+  configureDependencies();
+  runApp(const StoreApp());
 }
