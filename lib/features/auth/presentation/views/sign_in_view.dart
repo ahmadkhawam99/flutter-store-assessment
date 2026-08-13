@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/navigator/routes.dart';
@@ -7,7 +8,10 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/validation/auth/auth_validators.dart';
 import '../../../../core/widgets/image/app_image.dart';
 import '../widgets/auth_password_form_field.dart';
+import '../widgets/auth_message_banner.dart';
 import '../widgets/auth_text_form_field.dart';
+import '../bloc/auth_bloc/auth_bloc.dart';
+import '../bloc/login_bloc/login_bloc.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({super.key});
@@ -30,103 +34,139 @@ class _SignInViewState extends State<SignInView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(bottom: 24.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 230.h,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppColors.primary,
-                          AppColors.cyan,
-                          AppColors.primary.withAlpha(100),
-                        ],
-                        stops: const [0.0, 0.55, 1.0],
-                      ),
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(50.r),
-                        bottomRight: Radius.circular(50.r),
+    return BlocListener<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state is LoginSuccess) {
+          _passwordController.clear();
+          context.read<AuthBloc>().add(
+            AuthenticationSucceededEvent(state.session),
+          );
+          context.goNamed(AppRoutes.homeName);
+        } else if (state is LoginFailure) {
+          _passwordController.clear();
+          AuthMessageBanner.showError(context, state.message);
+        }
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: 24.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 230.h,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            AppColors.primary,
+                            AppColors.cyan,
+                            AppColors.primary.withAlpha(100),
+                          ],
+                          stops: const [0.0, 0.55, 1.0],
+                        ),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(50.r),
+                          bottomRight: Radius.circular(50.r),
+                        ),
                       ),
                     ),
-                  ),
-                  AppImage.logo(width: 150.r),
-                ],
-              ),
-              Form(
-                key: _formKey,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 26.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(height: 18.h),
-                      Text(
-                        'Welcome back',
-                        style: context.textTheme.headlineMedium,
-                      ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        'Sign in to continue to your store.',
-                        style: context.textTheme.bodyLarge,
-                      ),
-                      SizedBox(height: 32.h),
-                      AuthTextFormField(
-                        controller: _usernameController,
-                        label: 'Username',
-                        prefixIcon: Icons.person_outline,
-                        textInputAction: TextInputAction.next,
-                        autofillHints: const [AutofillHints.username],
-                        validator: AuthValidators.username,
-                      ),
-                      SizedBox(height: 16.h),
-                      AuthPasswordFormField(
-                        controller: _passwordController,
-                        textInputAction: TextInputAction.done,
-                        autofillHints: const [AutofillHints.password],
-                        validator: AuthValidators.password,
-                      ),
-                      SizedBox(height: 24.h),
-                      FilledButton(
-                        // TODO(auth): Replace UI-only navigation with Auth state.
-                        onPressed: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            context.goNamed(AppRoutes.homeName);
-                          }
-                        },
-                        child: const Text('Sign In'),
-                      ),
-                      SizedBox(height: 20.h),
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          const Text("Don't have an account?"),
-                          TextButton(
-                            onPressed: () =>
-                                context.pushNamed(AppRoutes.signUpName),
-                            child: const Text('Sign Up'),
-                          ),
-                        ],
-                      ),
-                    ],
+                    AppImage.logo(width: 150.r),
+                  ],
+                ),
+                Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 26.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(height: 18.h),
+                        Text(
+                          'Welcome back',
+                          style: context.textTheme.headlineMedium,
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          'Sign in to continue to your store.',
+                          style: context.textTheme.bodyLarge,
+                        ),
+                        SizedBox(height: 32.h),
+                        AuthTextFormField(
+                          controller: _usernameController,
+                          label: 'Username',
+                          prefixIcon: Icons.person_outline,
+                          textInputAction: TextInputAction.next,
+                          autofillHints: const [AutofillHints.username],
+                          validator: AuthValidators.username,
+                        ),
+                        SizedBox(height: 16.h),
+                        AuthPasswordFormField(
+                          controller: _passwordController,
+                          textInputAction: TextInputAction.done,
+                          autofillHints: const [AutofillHints.password],
+                          validator: AuthValidators.password,
+                        ),
+                        SizedBox(height: 24.h),
+                        BlocBuilder<LoginBloc, LoginState>(
+                          builder: (context, state) {
+                            final isLoading = state is LoginLoading;
+                            return FilledButton(
+                              onPressed: isLoading
+                                  ? null
+                                  : () {
+                                      if (_formKey.currentState?.validate() ??
+                                          false) {
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
+                                        context.read<LoginBloc>().add(
+                                          LoginSubmittedEvent(
+                                            username: _usernameController.text
+                                                .trim(),
+                                            password: _passwordController.text,
+                                          ),
+                                        );
+                                      }
+                                    },
+                              child: isLoading
+                                  ? const SizedBox.square(
+                                      dimension: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                      ),
+                                    )
+                                  : const Text('Sign In'),
+                            );
+                          },
+                        ),
+                        SizedBox(height: 20.h),
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            const Text("Don't have an account?"),
+                            TextButton(
+                              onPressed: () =>
+                                  context.pushNamed(AppRoutes.signUpName),
+                              child: const Text('Sign Up'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
