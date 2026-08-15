@@ -23,6 +23,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Welcome back'), findsOneWidget);
+    expect(find.byType(StretchingOverscrollIndicator), findsNothing);
 
     await tester.tap(find.byType(TextFormField).first);
     await tester.pump();
@@ -40,6 +41,17 @@ void main() {
     await tester.tap(find.text('Sign Up'));
     await tester.pumpAndSettle();
     expect(find.text('Create account'), findsOneWidget);
+    expect(find.byType(StretchingOverscrollIndicator), findsNothing);
+
+    await tester.tap(find.byType(TextFormField).first);
+    await tester.pump();
+    editableText = tester.widget<EditableText>(find.byType(EditableText).first);
+    expect(editableText.focusNode.hasFocus, true);
+
+    await tester.tapAt(const Offset(4, 4));
+    await tester.pump();
+    editableText = tester.widget<EditableText>(find.byType(EditableText).first);
+    expect(editableText.focusNode.hasFocus, false);
 
     await tester.ensureVisible(find.text('Sign In'));
     await tester.tap(find.text('Sign In'));

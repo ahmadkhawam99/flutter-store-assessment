@@ -38,6 +38,11 @@ abstract final class AppTheme {
         fontSize: 22.sp,
         fontWeight: FontWeight.w700,
       ),
+      titleMedium: TextStyle(
+        color: AppColors.text,
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w700,
+      ),
       bodyLarge: TextStyle(
         color: AppColors.secondaryText,
         fontSize: 16.sp,
@@ -48,15 +53,32 @@ abstract final class AppTheme {
         fontSize: 15.sp,
         fontWeight: FontWeight.w600,
       ),
+      bodySmall: TextStyle(
+        color: AppColors.secondaryText,
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w400,
+        height: 1.55,
+      ),
       labelLarge: TextStyle(
         color: AppColors.secondaryText,
         fontSize: 14.sp,
         fontWeight: FontWeight.w600,
       ),
+      labelMedium: TextStyle(
+        color: AppColors.secondaryText,
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.3,
+      ),
     ),
-    appBarTheme: const AppBarTheme(
+    appBarTheme: AppBarTheme(
+      titleTextStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 22.sp,
+        fontWeight: FontWeight.bold,
+      ),
       centerTitle: false,
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.primary,
       foregroundColor: AppColors.text,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
