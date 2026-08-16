@@ -45,9 +45,7 @@ void main() {
       bloc.stream,
       emitsInOrder([
         const LoginLoading(),
-        const LoginFailure(
-          'Username or password is incorrect. Fake Store accepts its built-in demo users only. Try johnd / m38rmF\$.',
-        ),
+        const LoginFailure('Username or password is incorrect.'),
       ]),
     );
 
@@ -96,13 +94,42 @@ void main() {
     await loggedOut;
     await bloc.close();
   });
+
+  test('AuthBloc preserves the session when logout fails', () async {
+    final repository = _AuthRepositoryFake(
+      logoutFailure: const UnknownFailure('Storage failed.'),
+    );
+    final bloc = AuthBloc(
+      RestoreSessionUseCase(repository),
+      LogoutUseCase(repository),
+    )..add(const AuthenticationSucceededEvent(_session));
+    await expectLater(bloc.stream, emits(const Authenticated(_session)));
+
+    final logoutFailed = expectLater(
+      bloc.stream,
+      emits(
+        const Authenticated(
+          _session,
+          logoutFailureMessage: 'We could not log you out. Please try again.',
+        ),
+      ),
+    );
+    bloc.add(const LogoutRequestedEvent());
+    await logoutFailed;
+    await bloc.close();
+  });
 }
 
 class _AuthRepositoryFake implements IAuthRepository {
-  _AuthRepositoryFake({this.restoredSession, this.loginFailure});
+  _AuthRepositoryFake({
+    this.restoredSession,
+    this.loginFailure,
+    this.logoutFailure,
+  });
 
   final AuthSessionEntity? restoredSession;
   final Failure? loginFailure;
+  final Failure? logoutFailure;
 
   @override
   Future<Either<Failure, AuthSessionEntity>> login({
@@ -112,7 +139,8 @@ class _AuthRepositoryFake implements IAuthRepository {
       loginFailure == null ? const Right(_session) : Left(loginFailure!);
 
   @override
-  Future<Either<Failure, Unit>> logout() async => const Right(unit);
+  Future<Either<Failure, Unit>> logout() async =>
+      logoutFailure == null ? const Right(unit) : Left(logoutFailure!);
 
   @override
   Future<Either<Failure, AuthSessionEntity?>> restoreSession() async =>

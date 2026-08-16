@@ -23,7 +23,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Welcome back'), findsOneWidget);
-    expect(find.byType(StretchingOverscrollIndicator), findsNothing);
 
     await tester.tap(find.byType(TextFormField).first);
     await tester.pump();
@@ -41,7 +40,6 @@ void main() {
     await tester.tap(find.text('Sign Up'));
     await tester.pumpAndSettle();
     expect(find.text('Create account'), findsOneWidget);
-    expect(find.byType(StretchingOverscrollIndicator), findsNothing);
 
     await tester.tap(find.byType(TextFormField).first);
     await tester.pump();

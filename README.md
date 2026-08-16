@@ -1,6 +1,27 @@
 # Store App
 
-A Flutter technical assessment using the public Fake Store API.
+A Flutter technical assessment that demonstrates a maintainable store flow using the public Fake Store API.
+
+## Features
+
+- Authentication, sign-up, logout, and session persistence
+- Product catalog with search and category filtering
+- Product details with responsive purchase controls
+- Persistent cart with quantity management
+- Account screen and subtle interface animations
+
+## Architecture
+
+The project follows Clean Architecture with `Presentation -> Domain <- Data`. BLoC manages application state, GetIt provides dependency injection, Dio handles HTTP requests, GoRouter owns navigation, and SharedPreferences persists the session and cart behind local data sources.
+
+## API
+
+The app uses [Fake Store API](https://fakestoreapi.com). Its user-creation endpoint simulates a successful request but does not persist new users like a production backend. Use an existing API user to test login.
+
+## Demo Login
+
+- Username: `johnd`
+- Password: `m38rmF$`
 
 ## Run
 
@@ -9,33 +30,14 @@ flutter pub get
 flutter run
 ```
 
-The default API base URL is `https://fakestoreapi.com`. It can be overridden:
+The API base URL can optionally be overridden:
 
 ```bash
 flutter run --dart-define=API_BASE_URL=https://example.com
 ```
 
-## Architecture
-
-Features follow `Presentation -> Domain <- Data`.
-
-- Presentation: Flutter UI and event/state BLoCs.
-- Domain: immutable entities, repository contracts, and use cases.
-- Data: Dio data sources, models, repository implementations, and persistence.
-- GetIt owns dependency composition and GoRouter owns navigation.
-
-Auth uses separate BLoCs for login submission, sign-up submission, and the global authenticated session. The login token is combined with the matching `/users` account record because `/auth/login` returns only a token.
-
-## Persistence
-
-SharedPreferences stores only the token, user ID, username, and email behind the auth local data source. Passwords are never persisted.
-
-## Verification
-
-The implemented project was checked with:
+## Tests
 
 ```bash
-dart format .
-flutter analyze
 flutter test
 ```

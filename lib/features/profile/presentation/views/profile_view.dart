@@ -32,7 +32,17 @@ class ProfileView extends StatelessWidget {
       ),
       body: SafeArea(
         top: false,
-        child: BlocBuilder<AuthBloc, AuthState>(
+        child: BlocConsumer<AuthBloc, AuthState>(
+          listenWhen: (previous, current) =>
+              current is Authenticated &&
+              current.logoutFailureMessage.isNotEmpty &&
+              previous != current,
+          listener: (context, state) {
+            final message = (state as Authenticated).logoutFailureMessage;
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(content: Text(message)));
+          },
           builder: (context, state) => switch (state) {
             Authenticated(:final session) => _AuthenticatedProfile(
               session: session,

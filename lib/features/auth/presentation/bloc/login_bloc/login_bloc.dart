@@ -32,8 +32,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   String _messageFor(Failure failure) => switch (failure) {
-    UnauthorizedFailure() =>
-      'Username or password is incorrect. Fake Store accepts its built-in demo users only. Try johnd / m38rmF\$.',
+    UnauthorizedFailure() => 'Username or password is incorrect.',
     NetworkFailure() =>
       'Unable to connect. Please check your internet connection and try again.',
     ServerFailure() =>

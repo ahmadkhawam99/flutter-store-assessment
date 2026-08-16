@@ -16,12 +16,13 @@ final class AuthChecking extends AuthState {
 }
 
 final class Authenticated extends AuthState {
-  const Authenticated(this.session);
+  const Authenticated(this.session, {this.logoutFailureMessage = ''});
 
   final AuthSessionEntity session;
+  final String logoutFailureMessage;
 
   @override
-  List<Object> get props => [session];
+  List<Object> get props => [session, logoutFailureMessage];
 }
 
 final class Unauthenticated extends AuthState {

@@ -30,12 +30,14 @@ class _AuthPasswordFormFieldState extends State<AuthPasswordFormField> {
   Widget build(BuildContext context) {
     return AuthTextFormField(
       controller: widget.controller,
+
       label: widget.label,
       prefixIcon: Icons.lock_outline,
       obscureText: _obscureText,
       textInputAction: widget.textInputAction,
       autofillHints: widget.autofillHints,
       validator: widget.validator,
+
       suffixIcon: IconButton(
         tooltip: _obscureText ? 'Show password' : 'Hide password',
         onPressed: () => setState(() => _obscureText = !_obscureText),

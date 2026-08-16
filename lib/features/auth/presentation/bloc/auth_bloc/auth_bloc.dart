@@ -42,9 +42,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     LogoutRequestedEvent event,
     Emitter<AuthState> emit,
   ) async {
+    final authenticated = state;
+    if (authenticated is! Authenticated) return;
+    if (authenticated.logoutFailureMessage.isNotEmpty) {
+      emit(Authenticated(authenticated.session));
+    }
+
     final result = await _logoutUseCase();
     result.fold(
-      (failure) => emit(AuthFailure(failure.message)),
+      (_) => emit(
+        Authenticated(
+          authenticated.session,
+          logoutFailureMessage: 'We could not log you out. Please try again.',
+        ),
+      ),
       (_) => emit(const Unauthenticated()),
     );
   }

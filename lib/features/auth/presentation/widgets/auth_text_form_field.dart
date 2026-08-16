@@ -32,6 +32,9 @@ class AuthTextFormField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      onTapOutside: (_) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
       textInputAction: textInputAction,
       autofillHints: autofillHints,
       validator: validator,

@@ -143,6 +143,31 @@ void main() {
     expect(find.byKey(const ValueKey('profile-scroll')), findsNothing);
     expect(find.text(_session.username), findsNothing);
   });
+
+  testWidgets('logout failure keeps the profile session and shows feedback', (
+    tester,
+  ) async {
+    final repository = _AuthRepositoryFake(failLogout: true);
+    final bloc = _buildAuthBloc(repository)
+      ..add(const AuthenticationSucceededEvent(_session));
+    addTearDown(bloc.close);
+
+    await _pumpProfile(tester, bloc);
+    final logoutButton = find.byKey(const ValueKey('profile-logout-button'));
+    await tester.ensureVisible(logoutButton);
+    await tester.tap(logoutButton);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('profile-logout-confirm')));
+    await tester.pumpAndSettle();
+
+    expect(repository.logoutCalls, 1);
+    expect(bloc.state, isA<Authenticated>());
+    expect(find.text(_session.username), findsWidgets);
+    expect(
+      find.text('We could not log you out. Please try again.'),
+      findsOneWidget,
+    );
+  });
 }
 
 Future<void> _pumpProfile(
@@ -185,6 +210,9 @@ AuthBloc _buildAuthBloc(IAuthRepository repository) =>
     AuthBloc(RestoreSessionUseCase(repository), LogoutUseCase(repository));
 
 class _AuthRepositoryFake implements IAuthRepository {
+  _AuthRepositoryFake({this.failLogout = false});
+
+  final bool failLogout;
   var loginCalls = 0;
   var restoreCalls = 0;
   var logoutCalls = 0;
@@ -201,7 +229,9 @@ class _AuthRepositoryFake implements IAuthRepository {
   @override
   Future<Either<Failure, Unit>> logout() async {
     logoutCalls++;
-    return const Right(unit);
+    return failLogout
+        ? const Left(UnknownFailure('Storage failed.'))
+        : const Right(unit);
   }
 
   @override
